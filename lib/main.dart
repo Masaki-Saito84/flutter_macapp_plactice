@@ -34,8 +34,8 @@ class App extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CupertinoButton(
-            child: Text('Open as sheet'),
-            onPressed: () => _onOpenPressed(PresentationStyle.sheet),
+            child: Text('Open as modal'),
+            onPressed: () => _onOpenPressed(PresentationStyle.modal),
           ),
         ],
       ),
