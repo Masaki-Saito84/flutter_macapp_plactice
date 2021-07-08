@@ -47,6 +47,31 @@ class _LauncherHomeState extends State<LauncherHome> {
     final nameCo = TextEditingController();
     final urlCo = TextEditingController();
 
+    Widget _builderRegistrationList(registration) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            flex: 1,
+            child: CupertinoButton(
+              child: Text(registration['name']),
+              onPressed: () => _onOpenPressed(PresentationStyle.modal, registration['url'])
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: CupertinoButton(
+              child: Text('編集'),
+              onPressed: () {
+                setState(() {
+                  registration['edit'] = true;
+                });
+              }
+            ),
+          ),
+        ],
+      );
+    }
     return CupertinoApp (
       debugShowCheckedModeBanner: false,
       home: Container(
@@ -86,6 +111,14 @@ class _LauncherHomeState extends State<LauncherHome> {
                   ),
                 ),
               ],
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _settingValue.length,
+                itemBuilder: (context, index) {
+                    return _builderRegistrationList(_settingValue[index]);
+                }
+              )
             ),
           ]
         )
