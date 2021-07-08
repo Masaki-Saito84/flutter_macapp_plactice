@@ -39,19 +39,57 @@ Future<void> _onOpenPressed(PresentationStyle presentationStyle, String targetUr
   );
 }
 
+class _LauncherHomeState extends State<LauncherHome> {
+
+  List _settingValue = [];
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    final nameCo = TextEditingController();
+    final urlCo = TextEditingController();
+
+    return CupertinoApp (
       debugShowCheckedModeBanner: false,
-      home: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CupertinoButton(
-            child: Text('Open as modal'),
-            onPressed: () => _onOpenPressed(PresentationStyle.modal),
-          ),
-        ],
-      ),
+      home: Container(
+        alignment: Alignment.center,
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: CupertinoTextField(
+                    placeholder: '表示名を入力してください',
+                    controller: nameCo,
+                ) ,
+                ),
+                Expanded(
+                  flex: 2,
+                  child: CupertinoTextField(
+                    placeholder: 'URLを入力してください',
+                    controller: urlCo,
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: CupertinoButton(
+                    child: Text('追加する'),
+                    onPressed: () {
+                      setState(() {
+                        if (nameCo.text != '' && urlCo.text != '') {
+                          _settingValue.add({'name': nameCo.text, 'url': urlCo.text, 'edit': false});
+                        }
+                      });
+                      nameCo.clear();
+                      urlCo.clear();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ]
+        )
+      )
     );
   }
 }
