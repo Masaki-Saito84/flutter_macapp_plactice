@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_macos_webview/flutter_macos_webview.dart';
 
 void main() => runApp(App());
@@ -6,7 +6,7 @@ void main() => runApp(App());
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: LauncherHome(),
     );
@@ -49,25 +49,21 @@ class _LauncherHomeState extends State<LauncherHome> {
 
     Widget _builderRegistrationList(registration) {
       return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            flex: 1,
-            child: CupertinoButton(
-              child: Text(registration['name']),
-              onPressed: () => _onOpenPressed(PresentationStyle.modal, registration['url'])
+          TextButton(
+            child: Text(
+              registration['name'],
             ),
+            onPressed: () => _onOpenPressed(PresentationStyle.modal, registration['url']),
           ),
-          Expanded(
-            flex: 1,
-            child: CupertinoButton(
-              child: Text('編集'),
-              onPressed: () {
-                setState(() {
-                  registration['edit'] = true;
-                });
-              }
-            ),
+          IconButton(
+            icon: Icon(Icons.note_alt_outlined),
+            onPressed: () {
+              setState(() {
+                registration['edit'] = true;
+              });
+            }
           ),
         ],
       );
@@ -79,10 +75,14 @@ class _LauncherHomeState extends State<LauncherHome> {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
-            flex: 1,
-            child: CupertinoButton(
-              child: Text('削除'),
+          Ink(
+            decoration: ShapeDecoration(
+              color: Colors.red,
+              shape: CircleBorder(),
+            ),
+            child: IconButton(
+              icon: Icon(Icons.close),
+              color: Colors.white,
               onPressed: () {
                 final deletedSettingValue = _settingValue.where((element) => element != registration).toList();
                 setState(() {
@@ -92,50 +92,49 @@ class _LauncherHomeState extends State<LauncherHome> {
             ),
           ),
           Expanded(
-            flex: 2,
-            child: CupertinoTextField(
-              placeholder: '表示名を入力してください',
+            flex: 1,
+            child: TextField(
               controller: editNameCo,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: '表示名を入力してください',
+              ),
             ) ,
           ),
           Expanded(
-            flex: 2,
-            child: CupertinoTextField(
-              placeholder: 'URLを入力してください',
+            flex: 1,
+            child: TextField(
               controller: editUrlCo,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'URLを入力してください',
+              ),
             ),
           ),
-          Expanded(
-            flex: 1,
-            child: CupertinoButton(
-              child: Text('更新'),
-              onPressed: () {
-                setState(() {
-                  registration['name'] = editNameCo.text;
-                  registration['url'] = editUrlCo.text;
-                  registration['edit'] = false;
-                });
-              }
-            ),
+          ElevatedButton(
+            child: Text('更新'),
+            onPressed: () {
+              setState(() {
+                registration['name'] = editNameCo.text;
+                registration['url'] = editUrlCo.text;
+                registration['edit'] = false;
+              });
+            }
           ),
-          Expanded(
-            flex: 1,
-            child: CupertinoButton(
-              child: Text('キャンセル'),
-              onPressed: () {
-                setState(() {
-                  registration['edit'] = false;
-                });
-              }
-            ),
+          TextButton(
+            child: Text('キャンセル'),
+            onPressed: () {
+              setState(() {
+                registration['edit'] = false;
+              });
+            }
           ),
         ],
       );
     }
 
-    return CupertinoApp (
-      debugShowCheckedModeBanner: false,
-      home: Container(
+    return Scaffold (
+      body: Container(
         alignment: Alignment.center,
         child: Column(
           children: [
@@ -143,32 +142,36 @@ class _LauncherHomeState extends State<LauncherHome> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
-                  flex: 2,
-                  child: CupertinoTextField(
-                    placeholder: '表示名を入力してください',
+                  flex: 1,
+                  child: TextField(
                     controller: nameCo,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: '表示名を入力してください',
+                    ),
                 ) ,
                 ),
                 Expanded(
-                  flex: 2,
-                  child: CupertinoTextField(
-                    placeholder: 'URLを入力してください',
+                  flex: 1,
+                  child: TextField(
                     controller: urlCo,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'URLを入力してください',
+                    ),
                   ),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: CupertinoButton(
-                    child: Text('追加する'),
-                    onPressed: () {
-                      setState(() {
-                        if (nameCo.text != '' && urlCo.text != '') {
-                          _settingValue.add({'name': nameCo.text, 'url': urlCo.text, 'edit': false});
-                        }
-                      });
-                      nameCo.clear();
-                      urlCo.clear();
-                    },
+                OutlinedButton(
+                  child: Text('追加する'),
+                  onPressed: () {
+                    setState(() {
+                      if (nameCo.text != '' && urlCo.text != '') {
+                        _settingValue.add({'name': nameCo.text, 'url': urlCo.text, 'edit': false});
+                      }
+                    });
+                    nameCo.clear();
+                    urlCo.clear();
+                  },
                   ),
                 ),
               ],
