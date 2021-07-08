@@ -72,6 +72,67 @@ class _LauncherHomeState extends State<LauncherHome> {
         ],
       );
     }
+
+    Widget _builderRegistrationEditList(registration) {
+      final editNameCo = TextEditingController(text: registration['name']);
+      final editUrlCo = TextEditingController(text: registration['url']);
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            flex: 1,
+            child: CupertinoButton(
+              child: Text('削除'),
+              onPressed: () {
+                final deletedSettingValue = _settingValue.where((element) => element != registration).toList();
+                setState(() {
+                  _settingValue = deletedSettingValue;
+                });
+              }
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: CupertinoTextField(
+              placeholder: '表示名を入力してください',
+              controller: editNameCo,
+            ) ,
+          ),
+          Expanded(
+            flex: 2,
+            child: CupertinoTextField(
+              placeholder: 'URLを入力してください',
+              controller: editUrlCo,
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: CupertinoButton(
+              child: Text('更新'),
+              onPressed: () {
+                setState(() {
+                  registration['name'] = editNameCo.text;
+                  registration['url'] = editUrlCo.text;
+                  registration['edit'] = false;
+                });
+              }
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: CupertinoButton(
+              child: Text('キャンセル'),
+              onPressed: () {
+                setState(() {
+                  registration['edit'] = false;
+                });
+              }
+            ),
+          ),
+        ],
+      );
+    }
+
     return CupertinoApp (
       debugShowCheckedModeBanner: false,
       home: Container(
@@ -116,7 +177,11 @@ class _LauncherHomeState extends State<LauncherHome> {
               child: ListView.builder(
                 itemCount: _settingValue.length,
                 itemBuilder: (context, index) {
+                  if(_settingValue[index]['edit']) {
+                    return _builderRegistrationEditList(_settingValue[index]);
+                  } else {
                     return _builderRegistrationList(_settingValue[index]);
+                  }
                 }
               )
             ),
