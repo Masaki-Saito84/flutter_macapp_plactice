@@ -227,8 +227,13 @@ class _LauncherHomeState extends State<LauncherHome> {
     }
 
     return Scaffold (
+      backgroundColor: Color(0xffE5E5E5),
       body: Container(
         alignment: Alignment.center,
+        padding: EdgeInsets.symmetric(
+          vertical: 30,
+          horizontal: 60,
+        ),
         child: Column(
           children: [
             Row(
