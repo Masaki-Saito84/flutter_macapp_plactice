@@ -241,26 +241,74 @@ class _LauncherHomeState extends State<LauncherHome> {
               children: [
                 Expanded(
                   flex: 1,
-                  child: TextField(
-                    controller: nameCo,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: '表示名を入力してください',
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      right:5
                     ),
-                ) ,
+                    child: TextField(
+                      controller: nameCo,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                            width: 0
+                          )
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                            width: 0
+                          )
+                        ),
+                        hintText: '表示名を入力してください',
+                      ),
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  )
                 ),
                 Expanded(
                   flex: 1,
-                  child: TextField(
-                    controller: urlCo,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'URLを入力してください',
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: 5,
+                      right: 15,
+                    ),
+                    child: TextField(
+                      controller: urlCo,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                            width: 0
+                          )
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                            width: 0
+                          )
+                        ),
+                        hintText: 'URLを入力してください',
+                      ),
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 ),
                 OutlinedButton(
-                  child: Text('追加する'),
+                  child: Text(
+                    '追加する',
+                    style: TextStyle(
+                      fontSize: 12
+                    )
+                    ),
                   onPressed: () {
                     setState(() {
                       if (nameCo.text != '' && urlCo.text != '') {
@@ -270,6 +318,10 @@ class _LauncherHomeState extends State<LauncherHome> {
                     nameCo.clear();
                     urlCo.clear();
                   },
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    side: BorderSide(color: Colors.blue),
+                    padding: EdgeInsets.all(24),
                   ),
                 ),
               ],
