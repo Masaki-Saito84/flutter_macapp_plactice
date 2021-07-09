@@ -47,89 +47,182 @@ class _LauncherHomeState extends State<LauncherHome> {
     final nameCo = TextEditingController();
     final urlCo = TextEditingController();
 
-    Widget _builderRegistrationList(registration) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          TextButton(
-            child: Text(
-              registration['name'],
+    Widget registeredItem(registration) {
+      return  Padding(
+        padding: EdgeInsets.only(left: 15, right: 15),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(
+              child: Text(
+                registration['name'],
+                style: TextStyle(
+                  decoration: TextDecoration.underline,
+                  fontSize: 19,
+                  fontWeight: FontWeight.w400,
+                  height: 1,
+                  color: Color(0xff333333)
+                ),
+              ),
+              onPressed: () => _onOpenPressed(PresentationStyle.modal, registration['url']),
+              style: ButtonStyle(
+                minimumSize: MaterialStateProperty.all(Size.zero),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 22.5, horizontal: 0)),
+              ),
             ),
-            onPressed: () => _onOpenPressed(PresentationStyle.modal, registration['url']),
-          ),
+            IconButton(
+              icon: Icon(Icons.note_alt_outlined),
+              iconSize: 25,
+              splashRadius: 25,
+              onPressed: () {
+                setState(() {
+                  registration['edit'] = true;
+                });
+              }
+            ),
+          ],
+        )
+      );
+    }
+
+    Widget registeredItemEdit(registration) {
+      final editNameCo = TextEditingController(text: registration['name']);
+      final editUrlCo = TextEditingController(text: registration['url']);
+      return Row(
+        children: [
           IconButton(
-            icon: Icon(Icons.note_alt_outlined),
+            icon: Icon(Icons.cancel),
+            color: Colors.red,
+            iconSize: 20,
+            splashRadius: 18,
             onPressed: () {
+              final deletedSettingValue = _settingValue.where((element) => element != registration).toList();
               setState(() {
-                registration['edit'] = true;
+                _settingValue = deletedSettingValue;
               });
             }
+          ),
+          Expanded(
+            flex: 1,
+            child: Padding(
+              padding: EdgeInsets.only(
+                right: 5
+              ),
+              child: TextField(
+                controller: editNameCo,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                      width: 0
+                    )
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                      width: 0
+                    )
+                  ),
+                  contentPadding: EdgeInsets.all(12),
+                  hintText: '表示名を入力してください',
+                ),
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1
+                ),
+              ) ,
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 5
+              ),
+              child: TextField(
+                controller: editUrlCo,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                      width: 0
+                    )
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                      width: 0
+                    )
+                  ),
+                  contentPadding: EdgeInsets.all(12),
+                  hintText: 'URLを入力してください',
+                ),
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1,
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: ElevatedButton(
+              child: Text(
+                '更新',
+                style: TextStyle(
+                  fontSize: 12,
+                  height: 1,
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  registration['name'] = editNameCo.text;
+                  registration['url'] = editUrlCo.text;
+                  registration['edit'] = false;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 26),
+              ),
+            ),
+          ),
+          TextButton(
+            child: Text(
+              'キャンセル',
+              style: TextStyle(
+                fontSize: 12,
+                color: Color(0xff828282),
+                ),
+              ),
+            onPressed: () {
+              setState(() {
+                registration['edit'] = false;
+              });
+            },
           ),
         ],
       );
     }
 
-    Widget _builderRegistrationEditList(registration) {
-      final editNameCo = TextEditingController(text: registration['name']);
-      final editUrlCo = TextEditingController(text: registration['url']);
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Ink(
-            decoration: ShapeDecoration(
-              color: Colors.red,
-              shape: CircleBorder(),
-            ),
-            child: IconButton(
-              icon: Icon(Icons.close),
-              color: Colors.white,
-              onPressed: () {
-                final deletedSettingValue = _settingValue.where((element) => element != registration).toList();
-                setState(() {
-                  _settingValue = deletedSettingValue;
-                });
-              }
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: TextField(
-              controller: editNameCo,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: '表示名を入力してください',
-              ),
-            ) ,
-          ),
-          Expanded(
-            flex: 1,
-            child: TextField(
-              controller: editUrlCo,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'URLを入力してください',
-              ),
-            ),
-          ),
-          ElevatedButton(
-            child: Text('更新'),
-            onPressed: () {
-              setState(() {
-                registration['name'] = editNameCo.text;
-                registration['url'] = editUrlCo.text;
-                registration['edit'] = false;
-              });
-            }
-          ),
-          TextButton(
-            child: Text('キャンセル'),
-            onPressed: () {
-              setState(() {
-                registration['edit'] = false;
-              });
-            }
-          ),
-        ],
+    Widget registeredList() {
+      final itemCount = _settingValue.length;
+      return ListView.separated(
+        itemBuilder: (BuildContext context, int index) {
+          if(index == 0 || index == itemCount + 1) {
+            return Container();
+          } else if(_settingValue[index - 1]['edit']) {
+            return registeredItemEdit(_settingValue[index - 1]);
+          } else {
+            return registeredItem(_settingValue[index - 1]);
+          }
+        },
+        separatorBuilder: (context, index) => Divider(color: Color(0xffBDBDBD),),
+        itemCount: itemCount + 2,
       );
     }
 
@@ -177,16 +270,7 @@ class _LauncherHomeState extends State<LauncherHome> {
               ],
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: _settingValue.length,
-                itemBuilder: (context, index) {
-                  if(_settingValue[index]['edit']) {
-                    return _builderRegistrationEditList(_settingValue[index]);
-                  } else {
-                    return _builderRegistrationList(_settingValue[index]);
-                  }
-                }
-              )
+              child: registeredList()
             ),
           ]
         )
