@@ -263,10 +263,12 @@ class _LauncherHomeState extends State<LauncherHome> {
                             width: 0
                           )
                         ),
+                        contentPadding: EdgeInsets.symmetric(vertical: 23, horizontal: 20),
                         hintText: '表示名を入力してください',
                       ),
                       style: TextStyle(
                         fontSize: 12,
+                        height: 1,
                       ),
                     ),
                   )
@@ -295,10 +297,12 @@ class _LauncherHomeState extends State<LauncherHome> {
                             width: 0
                           )
                         ),
+                        contentPadding: EdgeInsets.symmetric(vertical: 23, horizontal: 20),
                         hintText: 'URLを入力してください',
                       ),
                       style: TextStyle(
                         fontSize: 12,
+                        height: 1,
                       ),
                     ),
                   ),
@@ -328,7 +332,10 @@ class _LauncherHomeState extends State<LauncherHome> {
               ],
             ),
             Expanded(
-              child: registeredList()
+              child: Padding(
+                padding: EdgeInsets.only(top: 12),
+                child: registeredList(),
+                )
             ),
           ]
         )
