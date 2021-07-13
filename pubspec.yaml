@@ -1,6 +1,6 @@
 name: flutter_macapp_plactice
 description: Demonstrates how to use the flutter_macos_webview plugin.
-publish_to: "none"
+publish_to: 'none'
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
@@ -8,10 +8,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
   flutter_macos_webview:
     git:
-      url: 'https://github.com/Jesperpaulsen/flutter_macos_webview.git'
+      url: https://github.com/Jesperpaulsen/flutter_macos_webview.git
+  path: ^1.8.0
+  sqflite: ^2.0.0+3
 
 dev_dependencies:
   flutter_test:
