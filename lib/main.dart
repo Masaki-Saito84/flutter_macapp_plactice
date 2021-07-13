@@ -87,6 +87,15 @@ class SettingValue {
     );
   }
 
+  static Future<void> deleteSettingValue(String name) async {
+    final db = await database;
+    await db.delete(
+      'settingValue',
+      where: "name = ?",
+      whereArgs: [name],
+    );
+  }
+
 }
 
 Future<void> _onOpenPressed(PresentationStyle presentationStyle, String targetUrl) async {
