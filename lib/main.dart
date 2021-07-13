@@ -187,10 +187,11 @@ class _LauncherHomeState extends State<LauncherHome> {
             color: Colors.red,
             iconSize: 20,
             splashRadius: 18,
-            onPressed: () {
-              final deletedSettingValue = _settingValue.where((element) => element != registration).toList();
+            onPressed: () async {
+              await SettingValue.deleteSettingValue(registration.name);
+              final List<SettingValue> settingValues = await SettingValue.getSettingValues();
               setState(() {
-                _settingValue = deletedSettingValue;
+                _settingValue = settingValues;
               });
             }
           ),
