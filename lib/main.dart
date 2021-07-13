@@ -135,7 +135,7 @@ class _LauncherHomeState extends State<LauncherHome> {
           children: [
             TextButton(
               child: Text(
-                registration['name'],
+                registration.name,
                 style: TextStyle(
                   decoration: TextDecoration.underline,
                   fontSize: 19,
@@ -144,7 +144,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                   color: Color(0xff333333)
                 ),
               ),
-              onPressed: () => _onOpenPressed(PresentationStyle.modal, registration['url']),
+              onPressed: () => _onOpenPressed(PresentationStyle.modal, registration.url),
               style: ButtonStyle(
                 minimumSize: MaterialStateProperty.all(Size.zero),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -167,8 +167,8 @@ class _LauncherHomeState extends State<LauncherHome> {
     }
 
     Widget registeredItemEdit(registration) {
-      final editNameCo = TextEditingController(text: registration['name']);
-      final editUrlCo = TextEditingController(text: registration['url']);
+      final editNameCo = TextEditingController(text: registration.name);
+      final editUrlCo = TextEditingController(text: registration.url);
       return Row(
         children: [
           IconButton(
@@ -295,7 +295,7 @@ class _LauncherHomeState extends State<LauncherHome> {
         itemBuilder: (BuildContext context, int index) {
           if(index == 0 || index == itemCount + 1) {
             return Container();
-          } else if(_settingValue[index - 1]['edit']) {
+          } else if(_settingValue[index - 1].edit! != 0) {
             return registeredItemEdit(_settingValue[index - 1]);
           } else {
             return registeredItem(_settingValue[index - 1]);
