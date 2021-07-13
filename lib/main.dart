@@ -76,6 +76,17 @@ class SettingValue {
     });
   }
 
+  static Future<void> updataSettingValue(SettingValue settingValue) async {
+    final db = await database;
+    await db.update(
+      'settingValue',
+      settingValue.toMap(),
+      where: "name = ?",
+      whereArgs: [settingValue.name],
+      conflictAlgorithm: ConflictAlgorithm.fail,
+    );
+  }
+
 }
 
 Future<void> _onOpenPressed(PresentationStyle presentationStyle, String targetUrl) async {
