@@ -115,7 +115,7 @@ Future<void> _onOpenPressed(PresentationStyle presentationStyle, String targetUr
     url: targetUrl,
     presentationStyle: presentationStyle,
     userAgent:
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 Safari/605.1.15',
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 Safari/605.1.15',
   );
 }
 
@@ -213,7 +213,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                   fontSize: 14,
                   height: 1
                 ),
-              ) ,
+              ),
             ),
           ),
           Expanded(
@@ -390,7 +390,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                   child: Text(
                     '追加する',
                     style: TextStyle(
-                      fontSize: 12
+                      fontSize: 12,
                     )
                     ),
                   onPressed: () {
