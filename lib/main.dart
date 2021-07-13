@@ -296,9 +296,16 @@ class _LauncherHomeState extends State<LauncherHome> {
                 color: Color(0xff828282),
                 ),
               ),
-            onPressed: () {
+            onPressed: () async {
+              SettingValue updateSettingValue = SettingValue(
+                name: registration.name,
+                url: registration.url,
+                edit: 0,
+              );
+              await SettingValue.updataSettingValue(updateSettingValue);
+              final List<SettingValue> settingValues = await SettingValue.getSettingValues();
               setState(() {
-                registration['edit'] = false;
+                _settingValue = settingValues;
               });
             },
           ),
