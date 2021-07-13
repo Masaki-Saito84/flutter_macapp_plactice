@@ -417,8 +417,18 @@ class _LauncherHomeState extends State<LauncherHome> {
             Expanded(
               child: Padding(
                 padding: EdgeInsets.only(top: 12),
-                child: registeredList(),
+                child: FutureBuilder(
+                  future: initSettingValues(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return registeredList();
+                  }
                 )
+              )
             ),
           ]
         )
