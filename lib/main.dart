@@ -22,12 +22,12 @@ class LauncherHome extends StatefulWidget {
   _LauncherHomeState createState() => _LauncherHomeState();
 }
 
-class SettingValue {
+class RegisteredValues {
   final String? name;
   final String? url;
   final int? edit;
 
-  SettingValue({
+  RegisteredValues({
     this.name,
     this.url,
     this.edit,
@@ -43,32 +43,31 @@ class SettingValue {
 
   static Future<Database> get database async {
     final Future<Database> _database = openDatabase(
-      join(await getDatabasesPath(), 'settingValues_database.db'),
+      join(await getDatabasesPath(), 'registeredValues_database.db'),
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE settingValue(name TEXT PRIMARY KEY, url TEXT, edit INTEGER)"
+          "CREATE TABLE registeredValues(name TEXT PRIMARY KEY, url TEXT, edit INTEGER)"
         );
       },
       version: 1,
     );
     return _database;
-
   }
 
-  static Future<void> insertSettigValue(SettingValue settingValue) async {
+  static Future<void> insertValues(RegisteredValues registeredValues) async {
     final Database db = await database;
     await db.insert(
-      'settingValue',
-      settingValue.toMap(),
+      'registeredValues',
+      registeredValues.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  static Future<List<SettingValue>> getSettingValues() async {
+  static Future<List<RegisteredValues>> getValuesList() async {
     final Database db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('settingValue');
+    final List<Map<String, dynamic>> maps = await db.query('registeredValues');
     return List.generate(maps.length, (i) {
-      return SettingValue(
+      return RegisteredValues(
         name: maps[i]['name'],
         url: maps[i]['url'],
         edit: maps[i]['edit'],
@@ -76,21 +75,21 @@ class SettingValue {
     });
   }
 
-  static Future<void> updataSettingValue(SettingValue settingValue) async {
+  static Future<void> updataValues(RegisteredValues registeredValues) async {
     final db = await database;
     await db.update(
-      'settingValue',
-      settingValue.toMap(),
+      'registeredValues',
+      registeredValues.toMap(),
       where: "name = ?",
-      whereArgs: [settingValue.name],
+      whereArgs: [registeredValues.name],
       conflictAlgorithm: ConflictAlgorithm.fail,
     );
   }
 
-  static Future<void> deleteSettingValue(String name) async {
+  static Future<void> deleteValues(String name) async {
     final db = await database;
     await db.delete(
-      'settingValue',
+      'registeredValues',
       where: "name = ?",
       whereArgs: [name],
     );
@@ -121,214 +120,211 @@ Future<void> _onOpenPressed(PresentationStyle presentationStyle, String targetUr
 
 class _LauncherHomeState extends State<LauncherHome> {
 
-  List<SettingValue> _settingValue = [];
-  Future<void> initSettingValues() async {
-    _settingValue = await SettingValue.getSettingValues();
+  List<RegisteredValues> _registeredValuesList = [];
+
+  Future<void> _initRegisteredValuesList() async {
+    _registeredValuesList = await RegisteredValues.getValuesList();
   }
+
+  Future<void> _fetchState() async {
+    final List<RegisteredValues> _fetchedValuesList = await RegisteredValues.getValuesList();
+    setState(() {
+      _registeredValuesList = _fetchedValuesList;
+    });
+  }
+
+  Widget registeredItem(registration) {
+    return  Padding(
+      padding: EdgeInsets.only(left: 15, right: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          TextButton(
+            child: Text(
+              registration.name,
+              style: TextStyle(
+                decoration: TextDecoration.underline,
+                fontSize: 19,
+                fontWeight: FontWeight.w400,
+                height: 1,
+                color: Color(0xff333333)
+              ),
+            ),
+            onPressed: () => _onOpenPressed(PresentationStyle.modal, registration.url),
+            style: ButtonStyle(
+              minimumSize: MaterialStateProperty.all(Size.zero),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 22.5, horizontal: 0)),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.note_alt_outlined),
+            iconSize: 25,
+            splashRadius: 25,
+            onPressed: () async {
+              RegisteredValues _updateValues = RegisteredValues(
+                name: registration.name,
+                url: registration.url,
+                edit: 1,
+              );
+              await RegisteredValues.updataValues(_updateValues);
+              _fetchState();
+            }
+          ),
+        ],
+      )
+    );
+  }
+
+  Widget registeredItemEdit(registration) {
+    final editNameController = TextEditingController(text: registration.name);
+    final editUrlController = TextEditingController(text: registration.url);
+    return Row(
+      children: [
+        IconButton(
+          icon: Icon(Icons.cancel),
+          color: Colors.red,
+          iconSize: 20,
+          splashRadius: 18,
+          onPressed: () async {
+            await RegisteredValues.deleteValues(registration.name);
+            _fetchState();
+          }
+        ),
+        Expanded(
+          flex: 1,
+          child: Padding(
+            padding: EdgeInsets.only(
+              right: 5
+            ),
+            child: TextField(
+              controller: editNameController,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                    width: 0
+                  )
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                    width: 0
+                  )
+                ),
+                contentPadding: EdgeInsets.all(12),
+                hintText: '表示名を入力してください',
+              ),
+              style: TextStyle(
+                fontSize: 14,
+                height: 1
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 5
+            ),
+            child: TextField(
+              controller: editUrlController,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                    width: 0
+                  )
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white,
+                    width: 0
+                  )
+                ),
+                contentPadding: EdgeInsets.all(12),
+                hintText: 'URLを入力してください',
+              ),
+              style: TextStyle(
+                fontSize: 14,
+                height: 1,
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: ElevatedButton(
+            child: Text(
+              '更新',
+              style: TextStyle(
+                fontSize: 12,
+                height: 1,
+              ),
+            ),
+            onPressed: () async {
+              RegisteredValues _updateValues = RegisteredValues(
+                name: editNameController.text,
+                url: editUrlController.text,
+                edit: 0,
+              );
+              await RegisteredValues.updataValues(_updateValues);
+              _fetchState();
+            },
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 26),
+            ),
+          ),
+        ),
+        TextButton(
+          child: Text(
+            'キャンセル',
+            style: TextStyle(
+              fontSize: 12,
+              color: Color(0xff828282),
+              ),
+            ),
+          onPressed: () async {
+            RegisteredValues _updateValues = RegisteredValues(
+              name: registration.name,
+              url: registration.url,
+              edit: 0,
+            );
+            await RegisteredValues.updataValues(_updateValues);
+            _fetchState();
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget registeredListView() {
+    final itemCount = _registeredValuesList.length;
+    return ListView.separated(
+      itemBuilder: (BuildContext context, int index) {
+        if(index == 0 || index == itemCount + 1) {
+          return Container();
+        } else if(_registeredValuesList[index - 1].edit! != 0) {
+          return registeredItemEdit(_registeredValuesList[index - 1]);
+        } else {
+          return registeredItem(_registeredValuesList[index - 1]);
+        }
+      },
+      separatorBuilder: (BuildContext context, int index) => Divider(color: Color(0xffBDBDBD),),
+      itemCount: itemCount + 2,
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    final nameCo = TextEditingController();
-    final urlCo = TextEditingController();
-
-    Widget registeredItem(registration) {
-      return  Padding(
-        padding: EdgeInsets.only(left: 15, right: 15),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TextButton(
-              child: Text(
-                registration.name,
-                style: TextStyle(
-                  decoration: TextDecoration.underline,
-                  fontSize: 19,
-                  fontWeight: FontWeight.w400,
-                  height: 1,
-                  color: Color(0xff333333)
-                ),
-              ),
-              onPressed: () => _onOpenPressed(PresentationStyle.modal, registration.url),
-              style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all(Size.zero),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                padding: MaterialStateProperty.all(EdgeInsets.symmetric(vertical: 22.5, horizontal: 0)),
-              ),
-            ),
-            IconButton(
-              icon: Icon(Icons.note_alt_outlined),
-              iconSize: 25,
-              splashRadius: 25,
-              onPressed: () async {
-                SettingValue updateSettingValue = SettingValue(
-                  name: registration.name,
-                  url: registration.url,
-                  edit: 1,
-                );
-                await SettingValue.updataSettingValue(updateSettingValue);
-                final List<SettingValue> settingValues = await SettingValue.getSettingValues();
-                setState(() {
-                  _settingValue = settingValues;
-                });
-              }
-            ),
-          ],
-        )
-      );
-    }
-
-    Widget registeredItemEdit(registration) {
-      final editNameCo = TextEditingController(text: registration.name);
-      final editUrlCo = TextEditingController(text: registration.url);
-      return Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.cancel),
-            color: Colors.red,
-            iconSize: 20,
-            splashRadius: 18,
-            onPressed: () async {
-              await SettingValue.deleteSettingValue(registration.name);
-              final List<SettingValue> settingValues = await SettingValue.getSettingValues();
-              setState(() {
-                _settingValue = settingValues;
-              });
-            }
-          ),
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: EdgeInsets.only(
-                right: 5
-              ),
-              child: TextField(
-                controller: editNameCo,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                      width: 0
-                    )
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                      width: 0
-                    )
-                  ),
-                  contentPadding: EdgeInsets.all(12),
-                  hintText: '表示名を入力してください',
-                ),
-                style: TextStyle(
-                  fontSize: 14,
-                  height: 1
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: 5
-              ),
-              child: TextField(
-                controller: editUrlCo,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                      width: 0
-                    )
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                      width: 0
-                    )
-                  ),
-                  contentPadding: EdgeInsets.all(12),
-                  hintText: 'URLを入力してください',
-                ),
-                style: TextStyle(
-                  fontSize: 14,
-                  height: 1,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: ElevatedButton(
-              child: Text(
-                '更新',
-                style: TextStyle(
-                  fontSize: 12,
-                  height: 1,
-                ),
-              ),
-              onPressed: () async {
-                SettingValue updateSettingValue = SettingValue(
-                  name: editNameCo.text,
-                  url: editUrlCo.text,
-                  edit: 0,
-                );
-                await SettingValue.updataSettingValue(updateSettingValue);
-                final List<SettingValue> settingValues = await SettingValue.getSettingValues();
-                setState(() {
-                  _settingValue = settingValues;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 26),
-              ),
-            ),
-          ),
-          TextButton(
-            child: Text(
-              'キャンセル',
-              style: TextStyle(
-                fontSize: 12,
-                color: Color(0xff828282),
-                ),
-              ),
-            onPressed: () async {
-              SettingValue updateSettingValue = SettingValue(
-                name: registration.name,
-                url: registration.url,
-                edit: 0,
-              );
-              await SettingValue.updataSettingValue(updateSettingValue);
-              final List<SettingValue> settingValues = await SettingValue.getSettingValues();
-              setState(() {
-                _settingValue = settingValues;
-              });
-            },
-          ),
-        ],
-      );
-    }
-
-    Widget registeredList() {
-      final itemCount = _settingValue.length;
-      return ListView.separated(
-        itemBuilder: (BuildContext context, int index) {
-          if(index == 0 || index == itemCount + 1) {
-            return Container();
-          } else if(_settingValue[index - 1].edit! != 0) {
-            return registeredItemEdit(_settingValue[index - 1]);
-          } else {
-            return registeredItem(_settingValue[index - 1]);
-          }
-        },
-        separatorBuilder: (context, index) => Divider(color: Color(0xffBDBDBD),),
-        itemCount: itemCount + 2,
-      );
-    }
+    final nameController = TextEditingController();
+    final urlController = TextEditingController();
 
     return Scaffold (
       backgroundColor: Color(0xffE5E5E5),
@@ -350,7 +346,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                       right:5
                     ),
                     child: TextField(
-                      controller: nameCo,
+                      controller: nameController,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -384,7 +380,7 @@ class _LauncherHomeState extends State<LauncherHome> {
                       right: 15,
                     ),
                     child: TextField(
-                      controller: urlCo,
+                      controller: urlController,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -418,16 +414,17 @@ class _LauncherHomeState extends State<LauncherHome> {
                     )
                   ),
                   onPressed: () async {
-                    if (nameCo.text != '' && urlCo.text != '') {
-                      SettingValue _setValue = SettingValue(name: nameCo.text, url: urlCo.text, edit: 0);
-                      await SettingValue.insertSettigValue(_setValue);
-                      final List<SettingValue> settingValues = await SettingValue.getSettingValues();
-                      setState(() {
-                        _settingValue = settingValues;
-                      });
+                    if (nameController.text != '' && urlController.text != '') {
+                      RegisteredValues _insertValues = RegisteredValues(
+                        name: nameController.text,
+                        url: urlController.text,
+                        edit: 0
+                      );
+                      await RegisteredValues.insertValues(_insertValues);
+                      _fetchState();
                     }
-                    nameCo.clear();
-                    urlCo.clear();
+                    nameController.clear();
+                    urlController.clear();
                   },
                   style: OutlinedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -441,14 +438,14 @@ class _LauncherHomeState extends State<LauncherHome> {
               child: Padding(
                 padding: EdgeInsets.only(top: 12),
                 child: FutureBuilder(
-                  future: initSettingValues(),
+                  future: _initRegisteredValuesList(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
                         child: CircularProgressIndicator(),
                       );
                     }
-                    return registeredList();
+                    return registeredListView();
                   }
                 )
               )
