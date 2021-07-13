@@ -22,6 +22,27 @@ class LauncherHome extends StatefulWidget {
   _LauncherHomeState createState() => _LauncherHomeState();
 }
 
+class SettingValue {
+  final String? name;
+  final String? url;
+  final int? edit;
+
+  SettingValue({
+    this.name,
+    this.url,
+    this.edit,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'url': url,
+      'edit': edit,
+    };
+  }
+
+}
+
 Future<void> _onOpenPressed(PresentationStyle presentationStyle, String targetUrl) async {
   final webview = FlutterMacOSWebView(
     onOpen: () => print('Opened'),
