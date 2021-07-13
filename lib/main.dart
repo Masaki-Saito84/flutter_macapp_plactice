@@ -121,7 +121,7 @@ Future<void> _onOpenPressed(PresentationStyle presentationStyle, String targetUr
 
 class _LauncherHomeState extends State<LauncherHome> {
 
-  List _settingValue = [];
+  List<SettingValue> _settingValue = [];
   @override
   Widget build(BuildContext context) {
     final nameCo = TextEditingController();
