@@ -64,6 +64,18 @@ class SettingValue {
     );
   }
 
+  static Future<List<SettingValue>> getSettingValues() async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('settingValue');
+    return List.generate(maps.length, (i) {
+      return SettingValue(
+        name: maps[i]['name'],
+        url: maps[i]['url'],
+        edit: maps[i]['edit'],
+      );
+    });
+  }
+
 }
 
 Future<void> _onOpenPressed(PresentationStyle presentationStyle, String targetUrl) async {
