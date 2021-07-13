@@ -396,13 +396,16 @@ class _LauncherHomeState extends State<LauncherHome> {
                     style: TextStyle(
                       fontSize: 12,
                     )
-                    ),
-                  onPressed: () {
-                    setState(() {
-                      if (nameCo.text != '' && urlCo.text != '') {
-                        _settingValue.add({'name': nameCo.text, 'url': urlCo.text, 'edit': false});
-                      }
-                    });
+                  ),
+                  onPressed: () async {
+                    if (nameCo.text != '' && urlCo.text != '') {
+                      SettingValue _setValue = SettingValue(name: nameCo.text, url: urlCo.text, edit: 0);
+                      await SettingValue.insertSettigValue(_setValue);
+                      final List<SettingValue> settingValues = await SettingValue.getSettingValues();
+                      setState(() {
+                        _settingValue = settingValues;
+                      });
+                    }
                     nameCo.clear();
                     urlCo.clear();
                   },
