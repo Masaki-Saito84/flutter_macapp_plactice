@@ -55,6 +55,15 @@ class SettingValue {
 
   }
 
+  static Future<void> insertSettigValue(SettingValue settingValue) async {
+    final Database db = await database;
+    await db.insert(
+      'settingValue',
+      settingValue.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
 }
 
 Future<void> _onOpenPressed(PresentationStyle presentationStyle, String targetUrl) async {
