@@ -159,9 +159,16 @@ class _LauncherHomeState extends State<LauncherHome> {
               icon: Icon(Icons.note_alt_outlined),
               iconSize: 25,
               splashRadius: 25,
-              onPressed: () {
+              onPressed: () async {
+                SettingValue updateSettingValue = SettingValue(
+                  name: registration.name,
+                  url: registration.url,
+                  edit: 1,
+                );
+                await SettingValue.updataSettingValue(updateSettingValue);
+                final List<SettingValue> settingValues = await SettingValue.getSettingValues();
                 setState(() {
-                  registration['edit'] = true;
+                  _settingValue = settingValues;
                 });
               }
             ),
