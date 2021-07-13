@@ -41,6 +41,20 @@ class SettingValue {
     };
   }
 
+  static Future<Database> get database async {
+    final Future<Database> _database = openDatabase(
+      join(await getDatabasesPath(), 'settingValues_database.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          "CREATE TABLE settingValue(name TEXT PRIMARY KEY, url TEXT, edit INTEGER)"
+        );
+      },
+      version: 1,
+    );
+    return _database;
+
+  }
+
 }
 
 Future<void> _onOpenPressed(PresentationStyle presentationStyle, String targetUrl) async {
