@@ -271,11 +271,16 @@ class _LauncherHomeState extends State<LauncherHome> {
                   height: 1,
                 ),
               ),
-              onPressed: () {
+              onPressed: () async {
+                SettingValue updateSettingValue = SettingValue(
+                  name: editNameCo.text,
+                  url: editUrlCo.text,
+                  edit: 0,
+                );
+                await SettingValue.updataSettingValue(updateSettingValue);
+                final List<SettingValue> settingValues = await SettingValue.getSettingValues();
                 setState(() {
-                  registration['name'] = editNameCo.text;
-                  registration['url'] = editUrlCo.text;
-                  registration['edit'] = false;
+                  _settingValue = settingValues;
                 });
               },
               style: ElevatedButton.styleFrom(
